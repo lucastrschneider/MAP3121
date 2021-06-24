@@ -130,7 +130,7 @@ class QRMethod:
       self.n -= 1
 
     print(f'\nResultados finais:')
-    print(f'Numero de iteracoes: {self.k+1}')
+    print(f'Numero de iteracoes: {self.k}')
     print(f'Auto valores:\n{self.actual_alfa}')
     print(f'Auto vetores:\n{self.eigen_vec}')
 
