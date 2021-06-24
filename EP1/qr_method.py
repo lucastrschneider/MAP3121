@@ -20,8 +20,10 @@ class QRMethod:
     np.copyto(self.actual_alfa, a_alfa)
     np.copyto(self.actual_beta, a_beta)
 
+
   def _wilkinson_coeficient(self):
     pass
+
 
   def _givens_coeficients(self, k):
     alfa = self.actual_alfa[k]
@@ -41,10 +43,11 @@ class QRMethod:
     #   tau = -alfa/beta
     #   sk = 1 / np.sqrt(1 + tau ** 2)
     #   ck = sk * tau
-    
+
     if self.print_steps:
       print(f'{(ck, sk)}')
     return (ck, sk)
+
 
   def _get_R(self, gama):
     R = np.zeros((self.n, self.n))
@@ -56,6 +59,7 @@ class QRMethod:
 
     return R
 
+
   def get_A(self):
     A = np.zeros((self.n, self.n))
     for i in range(self.n-1):
@@ -66,6 +70,7 @@ class QRMethod:
 
     return A
 
+
   def get_Qi(self, i, ci, si):
     Qi = np.identity(self.n)
     Qi[i,i] = ci
@@ -75,12 +80,14 @@ class QRMethod:
 
     return Qi
 
+
   def get_Q(self, ck, sk):
     Q = np.identity(self.n)
     for i in range(self.n-1):
       Q = np.matmul(Q, self.get_Qi(i, ck[i], sk[i]).T)
 
     return Q
+
 
   def _iterate_once(self, epsilon):
 
@@ -92,7 +99,7 @@ class QRMethod:
       uk = self._wilkinson_coeficient()
     else:
       uk = 0
-    
+
     np.copyto(self.last_alfa, self.actual_alfa)
     np.copyto(self.last_beta, self.actual_beta)
     gama = self.actual_beta.copy()
@@ -102,12 +109,12 @@ class QRMethod:
     # Coeficientes de Givens (ck e sk)
     ck = np.ndarray(self.n-1, dtype=float)
     sk = np.ndarray(self.n-1, dtype=float)
-    
+
     if self.print_steps:
-      print(f'\n\nIteração {self.k+1}:')
-      print(f'\nDeslocamento espectral: uk = {uk}')
+      print(f'\n\nIteração {self.k}:')
+      print(f'\nDeslocamento espectral: u{self.k} = {uk}')
       print(f'\nCoeficientes de Givens:')
-      
+
 
     # Alfa e beta da matriz R(k)
     for i in range(self.n-1):
@@ -126,7 +133,7 @@ class QRMethod:
         gama[i+1] = gama[i+1] * ck[i]
 
     if self.print_steps:
-      print(f'\nMatriz R(k)')
+      print(f'\nMatriz R({self.k})')
       print(f'alfa: {self.actual_alfa}')
       print(f'gama: {gama}')
 
@@ -146,17 +153,19 @@ class QRMethod:
     self.actual_alfa += uk
 
     # Atualiza autovetores
+    self.auto_vec = np.matmul(self.auto_vec, self.get_Q(ck,sk))
 
     if self.print_steps:
-      print(f'\nMatriz A(k+1)')
+      print(f'\nMatriz A({self.k+1})')
       print(f'alfa: {self.actual_alfa}')
       print(f'beta: {self.actual_beta}')
-      print(f'\nAutovetores V(k+1)\n{self.auto_vec}')
+      print(f'\nAutovetores V({self.k+1})')
+      print(f'{self.auto_vec}')
 
     if self.print_matrices:
       Ai_plus_1 = self.get_A()
       Qi = self.get_Q(ck, sk)
-    
+
     self.k += 1
 
     if self.print_matrices:
@@ -164,7 +173,7 @@ class QRMethod:
       print(Ri)
       print(Qi)
       print(Ai_plus_1)
-    # return (Ai, Ri, Qi, Ai_plus_1)
+
 
   def iterate(self, epsilon):
     pass
