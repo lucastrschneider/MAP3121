@@ -1,12 +1,11 @@
 import numpy as np
 
 class QRMethod:
-  def __init__(self, a_alfa, a_beta, spectral=True, print_steps=False, print_matrices=False):
+  def __init__(self, a_alfa, a_beta, spectral=True, print_steps=False):
     self.n = a_alfa.shape[0]
     self.spectral = spectral
     self.k = 0
     self.print_steps = print_steps
-    self.print_matrices = print_matrices
 
     assert a_alfa.shape[0] == self.n
     assert a_beta.shape[0] == self.n-1
@@ -22,78 +21,43 @@ class QRMethod:
 
 
   def _wilkinson_coeficient(self):
-    pass
-
+    dk = (self.actual_alfa[self.n-2] - self.actual_alfa[self.n-1]) / 2
+    return self.actual_alfa[self.n-1] + dk - np.sign(dk)*np.sqrt(dk**2 + (self.actual_beta[self.n-2])**2)
 
   def _givens_coeficients(self, k):
     alfa = self.actual_alfa[k]
     beta = self.actual_beta[k]
 
     # Método normal
-    div = np.sqrt(alfa**2 + beta**2)
-    ck = alfa / div
-    sk = -beta / div
+    # div = np.sqrt(alfa**2 + beta**2)
+    # ck = alfa / div
+    # sk = -beta / div
 
     # Método mais estável
-    # if abs(alfa) > abs(beta):
-    #   tau = -beta/alfa
-    #   ck = 1 / np.sqrt(1 + tau ** 2)
-    #   sk = ck * tau
-    # else:
-    #   tau = -alfa/beta
-    #   sk = 1 / np.sqrt(1 + tau ** 2)
-    #   ck = sk * tau
+    if abs(alfa) > abs(beta):
+      tau = -beta/alfa
+      ck = 1 / np.sqrt(1 + tau ** 2)
+      sk = ck * tau
+    else:
+      tau = -alfa/beta
+      sk = 1 / np.sqrt(1 + tau ** 2)
+      ck = sk * tau
 
     if self.print_steps:
       print(f'{(ck, sk)}')
+
     return (ck, sk)
 
 
-  def _get_R(self, gama):
-    R = np.zeros((self.n, self.n))
-    for i in range(self.n-1):
-      R[i,i] = self.actual_alfa[i]
-      R[i,i+1] = gama[i]
-
-    R[self.n-1, self.n-1] = self.actual_alfa[self.n-1]
-
-    return R
-
-
-  def get_A(self):
-    A = np.zeros((self.n, self.n))
-    for i in range(self.n-1):
-      A[i,i] = self.actual_alfa[i]
-      A[i,i+1] = self.actual_beta[i]
-      A[i+1,i] = self.actual_beta[i]
-    A[self.n-1, self.n-1] = self.actual_alfa[self.n-1]
-
-    return A
-
-
-  def get_Qi(self, i, ci, si):
-    Qi = np.identity(self.n)
-    Qi[i,i] = ci
-    Qi[i+1,i+1] = ci
-    Qi[i,i+1] = -si
-    Qi[i+1,i] = si
+  def _get_Qi(self, ci, si):
+    Qi = np.identity(2) * ci
+    Qi[0,1] = -si
+    Qi[1,0] = si
 
     return Qi
 
 
-  def get_Q(self, ck, sk):
-    Q = np.identity(self.n)
-    for i in range(self.n-1):
-      Q = np.matmul(Q, self.get_Qi(i, ck[i], sk[i]).T)
-
-    return Q
-
-
   def _iterate_once(self):
-
-    if self.print_matrices:
-      Ai = self.get_A()
-
     # Euristica de Wilkinson (coeficiente uk)
     if self.spectral and self.k > 0:
       uk = self._wilkinson_coeficient()
@@ -115,8 +79,7 @@ class QRMethod:
       print(f'\nDeslocamento espectral: u{self.k} = {uk}')
       print(f'\nCoeficientes de Givens:')
 
-
-    # Alfa e beta da matriz R(k)
+    # Decomposição para calcular Q(k) e R(k)
     for i in range(self.n-1):
       # Calculo dos coefientes da iteração atual
       ck[i], sk[i] = self._givens_coeficients(i)
@@ -137,23 +100,18 @@ class QRMethod:
       print(f'alfa: {self.actual_alfa}')
       print(f'gama: {gama}')
 
-    if self.print_matrices:
-      Ri = self._get_R(gama)
-
-    # Alfa e beta da matriz A(k+1)
+    # Matriz A(k+1)
     for i in range(self.n-1):
       self.actual_alfa[i] = self.actual_alfa[i] * ck[i] - gama[i] * sk[i]
       self.actual_beta[i] = -self.actual_alfa[i+1] * sk[i]
       self.actual_alfa[i+1] = self.actual_alfa[i+1] * ck[i]
 
-    #   print(self.actual_alfa[i], self.actual_beta[i])
-    #   print(self.actual_alfa[i+1])
-
     # Correção por deslocamente espectral
     self.actual_alfa += uk
 
-    # Atualiza autovetores
-    self.auto_vec = np.matmul(self.auto_vec, self.get_Q(ck,sk))
+    # Atualiza autovetores V(k+1)
+    for i in range(self.n-1): # itera pelas matrizes Q1, Q2...
+      self.auto_vec[:,i:i+2] = np.matmul(self.auto_vec[:,i:i+2], self._get_Qi(ck[i], sk[i]).T)
 
     if self.print_steps:
       print(f'\nMatriz A({self.k+1})')
@@ -162,25 +120,17 @@ class QRMethod:
       print(f'\nAutovetores V({self.k+1})')
       print(f'{self.auto_vec}')
 
-    if self.print_matrices:
-      Ai_plus_1 = self.get_A()
-      Qi = self.get_Q(ck, sk)
-
     self.k += 1
-
-    if self.print_matrices:
-      print('\n', Ai)
-      print(Ri)
-      print(Qi)
-      print(Ai_plus_1)
 
 
   def iterate(self, epsilon):
     for m in range(self.n-1, 0, -1):
       while abs(self.actual_beta[m-1]) >= epsilon:
         self._iterate_once()
+      self.n -= 1
 
     print(f'\nFinal results:')
+    print(f'Number of iteration: {self.k+1}')
     print(f'Eigen values:\n{self.actual_alfa}')
     print(f'Eigen vectors:\n{self.auto_vec}')
 
@@ -190,8 +140,8 @@ def test1():
   alfa = 4*np.ones(3)
   beta = 3*np.ones(2)
 
-  method = QRMethod(alfa, beta, spectral=False, print_steps=True, print_matrices=False)
-  method.iterate(1e-10)
+  method = QRMethod(alfa, beta, spectral=True, print_steps=True)
+  method.iterate(1e-20)
 
 
   eigen_vectors = []
@@ -211,7 +161,7 @@ def test2():
   alfa = 4*np.ones(8)
   beta = 3*np.ones(7)
 
-  method = QRMethod(alfa, beta, spectral=False, print_steps=False, print_matrices=False)
+  method = QRMethod(alfa, beta, spectral=True, print_steps=False)
   method.iterate(1e-20)
 
   eigen_vectors = []
@@ -232,5 +182,5 @@ def test2():
   print(f'\n{np.array(eigen_vectors).T}')
 
 if __name__ == '__main__':
-  test2()
+  test1()
 
