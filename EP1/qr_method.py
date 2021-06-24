@@ -14,7 +14,7 @@ class QRMethod:
     self.last_beta = np.ndarray(self.n-1, dtype=float)
     self.actual_alfa = np.ndarray(self.n, dtype=float)
     self.actual_beta = np.ndarray(self.n-1, dtype=float)
-    self.auto_vec = np.identity(self.n, dtype=float)
+    self.eigen_vec = np.identity(self.n, dtype=float)
 
     np.copyto(self.actual_alfa, a_alfa)
     np.copyto(self.actual_beta, a_beta)
@@ -111,14 +111,14 @@ class QRMethod:
 
     # Atualiza autovetores V(k+1)
     for i in range(self.n-1): # itera pelas matrizes Q1, Q2...
-      self.auto_vec[:,i:i+2] = np.matmul(self.auto_vec[:,i:i+2], self._get_Qi(ck[i], sk[i]).T)
+      self.eigen_vec[:,i:i+2] = np.matmul(self.eigen_vec[:,i:i+2], self._get_Qi(ck[i], sk[i]).T)
 
     if self.print_steps:
       print(f'\nMatriz A({self.k+1})')
       print(f'alfa: {self.actual_alfa}')
       print(f'beta: {self.actual_beta}')
       print(f'\nAutovetores V({self.k+1})')
-      print(f'{self.auto_vec}')
+      print(f'{self.eigen_vec}')
 
     self.k += 1
 
@@ -129,10 +129,10 @@ class QRMethod:
         self._iterate_once()
       self.n -= 1
 
-    print(f'\nFinal results:')
-    print(f'Number of iteration: {self.k+1}')
-    print(f'Eigen values:\n{self.actual_alfa}')
-    print(f'Eigen vectors:\n{self.auto_vec}')
+    print(f'\nResultados finais:')
+    print(f'Numero de iteracoes: {self.k+1}')
+    print(f'Auto valores:\n{self.actual_alfa}')
+    print(f'Auto vetores:\n{self.eigen_vec}')
 
 
 
