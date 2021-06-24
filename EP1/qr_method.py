@@ -89,7 +89,7 @@ class QRMethod:
     return Q
 
 
-  def _iterate_once(self, epsilon):
+  def _iterate_once(self):
 
     if self.print_matrices:
       Ai = self.get_A()
@@ -176,12 +176,61 @@ class QRMethod:
 
 
   def iterate(self, epsilon):
-    pass
+    for m in range(self.n-1, 0, -1):
+      while abs(self.actual_beta[m-1]) >= epsilon:
+        self._iterate_once()
 
+    print(f'\nFinal results:')
+    print(f'Eigen values:\n{self.actual_alfa}')
+    print(f'Eigen vectors:\n{self.auto_vec}')
+
+
+
+def test1():
+  alfa = 4*np.ones(3)
+  beta = 3*np.ones(2)
+
+  method = QRMethod(alfa, beta, spectral=False, print_steps=True, print_matrices=False)
+  method.iterate(1e-10)
+
+
+  eigen_vectors = []
+  eigen_vectors.append(np.array([1, np.sqrt(2), 1], dtype=float))
+  eigen_vectors.append(np.array([-1, 0, 1], dtype=float))
+  eigen_vectors.append(np.array([1, -np.sqrt(2), 1], dtype=float))
+
+  for i in range(len(eigen_vectors)):
+    norm = np.linalg.norm(eigen_vectors[i])
+    if norm != 0:
+      eigen_vectors[i] /= norm
+
+  print(f'\n{np.array(eigen_vectors).T}')
+
+
+def test2():
+  alfa = 4*np.ones(8)
+  beta = 3*np.ones(7)
+
+  method = QRMethod(alfa, beta, spectral=False, print_steps=False, print_matrices=False)
+  method.iterate(1e-20)
+
+  eigen_vectors = []
+  eigen_vectors.append(np.array([1, 1.87939, 2.53209, 2.87939, 2.87939, 2.53209, 1.87939, 1 ], dtype=float))
+  eigen_vectors.append(np.array([-1, -1.53209, -1.3473, -0.532089, 0.532089, 1.3473, 1.53209, 1 ], dtype=float))
+  eigen_vectors.append(np.array([1, 1, 0, -1, -1, 0, 1, 1], dtype=float))
+  eigen_vectors.append(np.array([-1, -0.347296, 0.879385, 0.652704, -0.652704, -0.879385, 0.347296, 1 ], dtype=float))
+  eigen_vectors.append(np.array([1, -0.347296, -0.879385, 0.652704, 0.652704, -0.879385, -0.347296, 1], dtype=float))
+  eigen_vectors.append(np.array([-1, 1.87939, -2.53209, 2.87939, -2.87939, 2.35209, -1.87939, 1], dtype=float))
+  eigen_vectors.append(np.array([-1, 1, 0, -1, 1, 0, -1, 1], dtype=float))
+  eigen_vectors.append(np.array([1, -1.53209, 1.3473, -0.532089, -0.532089, 1.3473, -1.53209, 1], dtype=float))
+
+  for i in range(len(eigen_vectors)):
+    norm = np.linalg.norm(eigen_vectors[i])
+    if norm != 0:
+      eigen_vectors[i] /= norm
+
+  print(f'\n{np.array(eigen_vectors).T}')
 
 if __name__ == '__main__':
-    alfa = 4*np.ones(3)
-    beta = 3*np.ones(2)
+  test2()
 
-    method = QRMethod(alfa, beta, spectral=False, print_steps=True, print_matrices=False)
-    method._iterate_once(0)
