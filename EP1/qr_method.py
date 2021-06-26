@@ -134,6 +134,8 @@ class QRMethod:
     print(f'Auto valores:\n{self.actual_alfa}')
     print(f'Auto vetores:\n{self.eigen_vec}')
 
+    return self.actual_alfa, self.eigen_vec
+
 
 
 def test1():
