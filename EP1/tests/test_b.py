@@ -5,7 +5,7 @@ from EP1.qr_method import QRMethod
 N = 5
 MASSA = 2
 EPSILON = 1e-6
-TOTAL_TIME = 2 #s
+TOTAL_TIME = 10 #s
 dt = 0.025 #s
 
 def plot(tempo, posicao, subplot=False):
@@ -18,7 +18,7 @@ def plot(tempo, posicao, subplot=False):
     plt.ylabel('Posição (m)')
 
   else:
-    fig, axs = plt.subplots(3, 2)
+    fig, axs = plt.subplots(3, 2, sharex=True, sharey=True)
     for i in range(3):
       for j in range(2):
         if 2*i + j >= 5:
@@ -37,7 +37,7 @@ def plot(tempo, posicao, subplot=False):
 
     # Hide x labels and tick labels for top plots and y ticks for right plots.
     for ax in axs.flat:
-        ax.label_outer()
+       ax.label_outer()
 
 
 def run():
@@ -45,7 +45,7 @@ def run():
   print('COMEÇANDO O TESTE B)')
   print('#############################################\n')
 
-  k = np.array([40+2*(i+1) for i in range(N+1)])
+  k = np.array([40 + 2*(i+1) for i in range(N+1)])
 
   alfa = (k[0:N] + k[1:N+1]) / MASSA
   beta = -k[1:N] / MASSA
@@ -56,12 +56,28 @@ def run():
   eigen_values, eigen_vectors = method.iterate(EPSILON)
 
   T = np.linspace(0, TOTAL_TIME, int(TOTAL_TIME / dt + 1))
-  X = np.ndarray((5, T.shape[0]), dtype=float)
+  X = np.ndarray((N, T.shape[0]), dtype=float)
 
   X0 = np.zeros(N)
 
-  mode = input('\nDigite F para usar o X0 correspondente ao modo de maior frequência, ou apenas enter para inserir a posição inicial: ')
-  if mode == 'f' or mode == 'F':
+  print('\nDigite o número do teste a ser realizado:')
+  print('\t1 - X(0) = -2, -3, -1, -3, -1')
+  print('\t2 - X(0) = 1, 10, -4, 3, -2')
+  print('\t3 - X(0) correspondente ao modo de maior frequência')
+  print('\tOutros - Digite seu próprio valor de X(0)')
+
+  try:
+    mode = int(input())
+  except:
+    mode = None
+
+  if mode == 1:
+    X0 = np.array([-2, -3, -1, -3, -1], dtype=float)
+
+  elif mode == 2:
+    X0 = np.array([1, 10, -4, 3, -2], dtype=float)
+
+  elif mode == 3:
     i_max = 0
     for i in range(1, len(eigen_values)):
       if eigen_values[i] > eigen_values[i_max]:
