@@ -1,6 +1,26 @@
 import numpy as np
 
 class QRMethod:
+  """
+  Classe que representa o método QR para cálculo de autovalores e autovetores.
+
+  Args:
+    a_alfa (numpy.ndarray): Array de uma dimensão contendo os 'n' elementos da
+                            diagonal principal da matriz A do sistema.
+    a_beta (numpy.ndarray): Array de uma dimensão contendo os 'n-1' elementos da
+                            subdiagonal da matriz A do sistema.
+    spectral (bool, optional): Indica se deve usar ou não deslocamento espectral. Padrão é True.
+    print_steps (bool, optional): Indica se deve imprimir informações de cada iteração na tela. Padrão é False.
+
+  Attributes:
+    n (int): Variável que indica a dimensão atual da matriz do sistema.
+    k (int): Guarda o número da iteração atual do algorítmo.
+    spectral (bool): Inidica se deve ser usado ou não o deslocamento espectral.
+    print_steps (bool): Indica se deve imprimir informações de cada iteração na tela.
+    actual_alfa (numpy.ndarray): Guarda o valor atual da diagonal principal de A.
+    actual_beta (numpy.ndarray): Guarda o valor atual da subdiagonal de A.
+    eigen_vec (numpy.ndarray): Matriz 'n x n' que guarda os autovetores do sistema.
+  """
   def __init__(self, a_alfa, a_beta, spectral=True, print_steps=False):
     self.n = a_alfa.shape[0]
     self.spectral = spectral
@@ -21,10 +41,25 @@ class QRMethod:
 
 
   def _wilkinson_coeficient(self):
+    """
+    Calcula o coeficiente da heurística de Wilkinson para o caso de deslocamento espectral.
+
+    Returns:
+      float: Coeficiente de Wilkinson para matriz atual.
+    """
     dk = (self.actual_alfa[self.n-2] - self.actual_alfa[self.n-1]) / 2
     return self.actual_alfa[self.n-1] + dk - np.sign(dk)*np.sqrt(dk**2 + (self.actual_beta[self.n-2])**2)
 
   def _givens_coeficients(self, k):
+    """
+    Calcula os coeficientes da rotação de givens para linha atual considerada.
+
+    Args:
+      k (int): Linha da matriz considerada para calculo dos coeficientes.
+
+    Returns:
+      (float, float): Retorna um tuple com os coeficientes ck e sk.
+    """
     alfa = self.actual_alfa[k]
     beta = self.actual_beta[k]
 
@@ -50,6 +85,16 @@ class QRMethod:
 
 
   def _get_Qi(self, ci, si):
+    """
+    Retorna a matriz 2x2 para a rotação de Givens.
+
+    Args:
+      ci (float): Coeficiente de Givens de cosseno.
+      si (float): Coeficiente de Givens de seno.
+
+    Returns:
+      numpy.ndarray: Matriz 2x2 para rotação de Givens dados os coeficientes dos parâmetros.
+    """
     Qi = np.identity(2) * ci
     Qi[0,1] = -si
     Qi[1,0] = si
@@ -58,6 +103,9 @@ class QRMethod:
 
 
   def _iterate_once(self):
+    """
+    Método que representa uma iteração do algorítmo QR.
+    """
     # Euristica de Wilkinson (coeficiente uk)
     if self.spectral and self.k > 0:
       uk = self._wilkinson_coeficient()
@@ -100,7 +148,7 @@ class QRMethod:
       print(f'alfa: {self.actual_alfa}')
       print(f'gama: {gama}')
 
-    # Matriz A(k+1)
+    # Atualização da matriz A(k+1)
     for i in range(self.n-1):
       self.actual_alfa[i] = self.actual_alfa[i] * ck[i] - gama[i] * sk[i]
       self.actual_beta[i] = -self.actual_alfa[i+1] * sk[i]
@@ -109,7 +157,7 @@ class QRMethod:
     # Correção por deslocamente espectral
     self.actual_alfa += uk
 
-    # Atualiza autovetores V(k+1)
+    # Atualização dos autovetores V(k+1)
     for i in range(self.n-1): # itera pelas matrizes Q1, Q2...
       self.eigen_vec[:,i:i+2] = np.matmul(self.eigen_vec[:,i:i+2], self._get_Qi(ck[i], sk[i]).T)
 
@@ -124,6 +172,18 @@ class QRMethod:
 
 
   def iterate(self, epsilon):
+    """
+    Método público que realiza as iterações do algorítmo até que a condição de parada dada por
+    epsilon seja satisfeita.
+
+    Args:
+        epsilon (float): Valor máximo que os betas podem ter para que sejam considerados nulos.
+                         Quanto menor esse valor, mais iterações vão ocorrer. Um bom valor inicial é 1e-6.
+
+    Returns:
+        (numpy.ndarray, numpy.ndarray): Tuple contendo o array com os autovalores e a matriz com os
+                                        autovetores correspondentes em colunas.
+    """
     for m in range(self.n-1, 0, -1):
       while abs(self.actual_beta[m-1]) >= epsilon:
         self._iterate_once()
@@ -137,52 +197,6 @@ class QRMethod:
     return self.actual_alfa, self.eigen_vec
 
 
-
-def test1():
-  alfa = 4*np.ones(3)
-  beta = 3*np.ones(2)
-
-  method = QRMethod(alfa, beta, spectral=True, print_steps=True)
-  method.iterate(1e-20)
-
-
-  eigen_vectors = []
-  eigen_vectors.append(np.array([1, np.sqrt(2), 1], dtype=float))
-  eigen_vectors.append(np.array([-1, 0, 1], dtype=float))
-  eigen_vectors.append(np.array([1, -np.sqrt(2), 1], dtype=float))
-
-  for i in range(len(eigen_vectors)):
-    norm = np.linalg.norm(eigen_vectors[i])
-    if norm != 0:
-      eigen_vectors[i] /= norm
-
-  print(f'\n{np.array(eigen_vectors).T}')
-
-
-def test2():
-  alfa = 4*np.ones(8)
-  beta = 3*np.ones(7)
-
-  method = QRMethod(alfa, beta, spectral=True, print_steps=False)
-  method.iterate(1e-20)
-
-  eigen_vectors = []
-  eigen_vectors.append(np.array([1, 1.87939, 2.53209, 2.87939, 2.87939, 2.53209, 1.87939, 1 ], dtype=float))
-  eigen_vectors.append(np.array([-1, -1.53209, -1.3473, -0.532089, 0.532089, 1.3473, 1.53209, 1 ], dtype=float))
-  eigen_vectors.append(np.array([1, 1, 0, -1, -1, 0, 1, 1], dtype=float))
-  eigen_vectors.append(np.array([-1, -0.347296, 0.879385, 0.652704, -0.652704, -0.879385, 0.347296, 1 ], dtype=float))
-  eigen_vectors.append(np.array([1, -0.347296, -0.879385, 0.652704, 0.652704, -0.879385, -0.347296, 1], dtype=float))
-  eigen_vectors.append(np.array([-1, 1.87939, -2.53209, 2.87939, -2.87939, 2.35209, -1.87939, 1], dtype=float))
-  eigen_vectors.append(np.array([-1, 1, 0, -1, 1, 0, -1, 1], dtype=float))
-  eigen_vectors.append(np.array([1, -1.53209, 1.3473, -0.532089, -0.532089, 1.3473, -1.53209, 1], dtype=float))
-
-  for i in range(len(eigen_vectors)):
-    norm = np.linalg.norm(eigen_vectors[i])
-    if norm != 0:
-      eigen_vectors[i] /= norm
-
-  print(f'\n{np.array(eigen_vectors).T}')
-
 if __name__ == '__main__':
-  test1()
-
+  print('Esse arquivo contem apenas o algoritmo QR, mas não os testes.')
+  print('Para rodar os testes corretamente, por favor consulte o README.txt')
