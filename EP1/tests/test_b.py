@@ -60,14 +60,14 @@ def run():
 
   X0 = np.zeros(N)
 
-  print('\nDigite o número do teste a ser realizado:')
+  print('\nOpções disponíveis:')
   print('\t1 - X(0) = -2, -3, -1, -3, -1')
   print('\t2 - X(0) = 1, 10, -4, 3, -2')
   print('\t3 - X(0) correspondente ao modo de maior frequência')
-  print('\tOutros - Digite seu próprio valor de X(0)')
+  print('\t4 - Digite seu próprio valor de X(0)\n')
 
   try:
-    mode = int(input())
+    mode = int(input('Número da opção escolhida (entradas inválidas levam à opção 4): '))
   except:
     mode = None
 
