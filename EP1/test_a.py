@@ -29,14 +29,32 @@ def run():
     alfa = 2*np.ones(n)
     beta = -1*np.ones(n-1)
 
+    exp_eigen_values = np.ndarray(n, dtype=float)
+    exp_eigen_vectors = np.ndarray((n,n), dtype=float)
+
+    print('\nValores esperados\n')
+    for j in range(n):
+      exp_eigen_values[n-j-1] = 2 * (1 - np.cos((j+1) * np.pi / (n+1)))
+      for i in range(n):
+        exp_eigen_vectors[i][n-j-1] = np.sin((j+1) * (i+1) * np.pi / (n+1))
+
+      exp_eigen_vectors[:, n-j-1] = exp_eigen_vectors[:, n-j-1] / np.linalg.norm(exp_eigen_vectors[:, n-j-1])
+
+    print(f'Auto valores:\n{exp_eigen_values}')
+    print(f'Auto vetores:\n{exp_eigen_vectors}')
+
     print('\nSem deslocamento espectral')
     method = QRMethod(alfa, beta, spectral=False, print_steps=False)
-    method.iterate(EPSILON)
+    qr_eigen_values, qr_eigen_vectors = method.iterate(EPSILON)
+
+    # TODO calcular erro
 
     print('\nCom deslocamento espectral')
     spectral_method = QRMethod(alfa, beta, spectral=True, print_steps=False)
-    spectral_method.iterate(EPSILON)
+    qr_spectral_eigen_values, qr_spectral_eigen_vectors = spectral_method.iterate(EPSILON)
 
+    # TODO calcular erro
+    
     print('\n')
 
 
