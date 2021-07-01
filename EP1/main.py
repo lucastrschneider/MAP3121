@@ -1,4 +1,6 @@
-from EP1 import tests
+import test_a
+import test_b
+import test_c
 
 HEADER = '''
 #############################################
@@ -21,13 +23,13 @@ def main():
 
   if test_letter == 'a' or test_letter == 'A':
     print('\n\n\n')
-    tests.test_a.run()
+    test_a.run()
   elif test_letter == 'b' or test_letter == 'B':
     print('\n\n\n')
-    tests.test_b.run()
+    test_b.run()
   elif test_letter == 'c' or test_letter == 'C':
     print('\n\n\n')
-    tests.test_c.run()
+    test_c.run()
   else:
     print('Teste não encontrado, terminando...\n')
 

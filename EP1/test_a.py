@@ -1,5 +1,5 @@
 import numpy as np
-from EP1.qr_method import QRMethod
+from qr_method import QRMethod
 
 EPSILON = 1e-6
 COMPLETE_N_LIST = [4, 8, 16, 32]
@@ -10,7 +10,7 @@ def run():
   print('#############################################\n')
 
   try:
-    defined_n = int(input('Digite enter para realizar o teste completo (n = 4, 8, 16 e 32)\nou especifique um valor de n: '))
+    defined_n = int(input('Digite enter para realizar o teste completo (n = 4, 8, 16 e 32) ou\nespecifique um valor de n: '))
     if defined_n > 0:
       n_list = [defined_n]
     else:

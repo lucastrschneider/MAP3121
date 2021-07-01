@@ -1,8 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from EP1.qr_method import QRMethod
+from qr_method import QRMethod
 
-N = 5
+N = 10
 MASSA = 2
 EPSILON = 1e-6
 TOTAL_TIME = 10 #s
@@ -18,19 +18,11 @@ def plot(tempo, posicao, subplot=False):
     plt.ylabel('Posição (m)')
 
   else:
-    fig, axs = plt.subplots(3, 2, sharex=True, sharey=True)
-    for i in range(3):
+    fig, axs = plt.subplots(5, 2,  sharex=True, sharey=True)
+    for i in range(5):
       for j in range(2):
-        if 2*i + j >= 5:
-          break
         axs[i, j].plot(tempo, posicao[2*i + j,:])
         axs[i, j].set_title(f'x{2*i+j+1}(t)')
-
-    for i in range(posicao.shape[0]):
-      axs[2, 1].plot(tempo, posicao[i,:], label=f'x{i+1}')
-      axs[2, 1].set_title('Combinado')
-
-    plt.legend(loc=1)
 
     for ax in axs.flat:
         ax.set(xlabel='Tempo (s)', ylabel='Posição (m)')
@@ -42,10 +34,10 @@ def plot(tempo, posicao, subplot=False):
 
 def run():
   print('#############################################')
-  print('COMEÇANDO O TESTE B)')
+  print('COMEÇANDO O TESTE C)')
   print('#############################################\n')
 
-  k = np.array([40 + 2*(i+1) for i in range(N+1)])
+  k = np.array([40 + 2 * (-1)**(i+1) for i in range(N+1)])
 
   alfa = (k[0:N] + k[1:N+1]) / MASSA
   beta = -k[1:N] / MASSA
@@ -61,8 +53,8 @@ def run():
   X0 = np.zeros(N)
 
   print('\nOpções disponíveis:')
-  print('\t1 - X(0) = -2, -3, -1, -3, -1')
-  print('\t2 - X(0) = 1, 10, -4, 3, -2')
+  print('\t1 - X(0) = -2, -3, -1, -3, -1, -2, -3, -1, -3, -1')
+  print('\t2 - X(0) = 1, 10, -4, 3, -2, 1, 10, -4, 3, -2')
   print('\t3 - X(0) correspondente ao modo de maior frequência')
   print('\t4 - Digite seu próprio valor de X(0)\n')
 
@@ -72,10 +64,10 @@ def run():
     mode = None
 
   if mode == 1:
-    X0 = np.array([-2, -3, -1, -3, -1], dtype=float)
+    X0 = np.array([-2, -3, -1, -3, -1, -2, -3, -1, -3, -1], dtype=float)
 
   elif mode == 2:
-    X0 = np.array([1, 10, -4, 3, -2], dtype=float)
+    X0 = np.array([1, 10, -4, 3, -2, 1, 10, -4, 3, -2], dtype=float)
 
   elif mode == 3:
     i_max = 0
@@ -104,3 +96,7 @@ def run():
   plot(T, X, subplot = True)
 
   plt.show()
+
+
+if __name__ == '__main__':
+  run()
