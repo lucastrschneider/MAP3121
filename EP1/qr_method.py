@@ -50,6 +50,7 @@ class QRMethod:
     dk = (self.actual_alfa[self.n-2] - self.actual_alfa[self.n-1]) / 2
     return self.actual_alfa[self.n-1] + dk - np.sign(dk)*np.sqrt(dk**2 + (self.actual_beta[self.n-2])**2)
 
+
   def _givens_coeficients(self, k):
     """
     Calcula os coeficientes da rotação de givens para linha atual considerada.
@@ -106,7 +107,7 @@ class QRMethod:
     """
     Método que representa uma iteração do algorítmo QR.
     """
-    # Euristica de Wilkinson (coeficiente uk)
+    # Heuristica de Wilkinson (coeficiente uk)
     if self.spectral and self.k > 0:
       uk = self._wilkinson_coeficient()
     else:
