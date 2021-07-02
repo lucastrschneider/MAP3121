@@ -47,14 +47,16 @@ def run():
     method = QRMethod(alfa, beta, spectral=False, print_steps=False)
     qr_eigen_values, qr_eigen_vectors = method.iterate(EPSILON)
 
-    # TODO calcular erro
+    qr_value_error = np.linalg.norm(np.sort(exp_eigen_values)-np.sort(qr_eigen_values), ord=np.inf)
+    print(f'Error estimado dos autovalores: {qr_value_error}')
 
     print('\nCom deslocamento espectral')
     spectral_method = QRMethod(alfa, beta, spectral=True, print_steps=False)
     qr_spectral_eigen_values, qr_spectral_eigen_vectors = spectral_method.iterate(EPSILON)
 
-    # TODO calcular erro
-    
+    qr_spectral_value_error = np.linalg.norm(np.sort(exp_eigen_values)-np.sort(qr_spectral_eigen_values), ord=np.inf)
+    print(f'Error estimado dos autovalores: {qr_spectral_value_error}')
+
     print('\n')
 
 
