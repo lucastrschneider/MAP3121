@@ -1,0 +1,18 @@
+#############################################
+Aplicação do Algoritmo QR - MAP3121
+
+Jean Carlos Mello Xavier Faria - 11259628
+Lucas Tonini Rosenberg Schneider - 11260850
+#############################################
+
+O exercício programa foi desenvolvido em Python e, para executá-lo, é necessário apenas ter uma versão do interpretador instalada. Recomenda-se Python3.7 ou superior.
+
+Em relação às dependências, é necessário ter numpy e matplotlib instalados também.
+
+O projeto possui um script principal main.py, de onde os testes podem ser selecionados e configurados. Para isso, execute o comando abaixo de dentro da pasta do projeto.
+
+$ python3 main.py
+
+O terminal irá mostrar as instruções de como escolher os testes e configurar os parâmetros dos mesmos.
+
+Mais informações podem ser encontradas na seção 3 do relatório.
