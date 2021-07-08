@@ -24,7 +24,12 @@ class Householder:
 
     alfa[self.n-1] = self.A[self.n-1][self.n-1]
 
-    return alfa, beta
+    result = {
+      'alfa' : alfa,
+      'beta' : beta,
+    }
+
+    return result
 
   def _iterate_once(self):
     if self.print_steps:
@@ -74,9 +79,11 @@ class Householder:
     for m in range(self.n-2):
       self._iterate_once()
 
-    T = self._get_alfa_beta()
+    result = {}
+    result['T'] = self._get_alfa_beta()
+    result['Ht'] = self.Ht
 
-    return T, self.Ht
+    return result
 
 
 
@@ -91,5 +98,6 @@ if __name__ == '__main__':
   # hh._iterate_once()
   result = hh.iterate()
 
-  print(result[0])
-  print(result[1])
+  print(result['T']['alfa'])
+  print(result['T']['beta'])
+  print(result['Ht'])
