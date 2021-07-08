@@ -14,8 +14,22 @@ class Householder:
 
     np.copyto(self.A, A)
 
+  def _get_alfa_beta(self):
+    alfa = np.ndarray(self.n, dtype=float)
+    beta = np.ndarray(self.n-1, dtype=float)
+
+    for i in range(self.n-1):
+      alfa[i] = self.A[i][i]
+      beta[i] = self.A[i+1][i]
+
+    alfa[self.n-1] = self.A[self.n-1][self.n-1]
+
+    return alfa, beta
 
   def _iterate_once(self):
+    if self.print_steps:
+      print(f'Iteração {self.k+1}:')
+
     # Calcula o valor do wk da iteracao atual
     ak_ = self.A[self.k+1 :, [self.k]]
 
@@ -46,15 +60,24 @@ class Householder:
       print(f'H_w{self.k+1} A H_w{self.k+1}:\n{self.A}')
 
     # Multiplica a matriz H_wk a direita de Ht
-    for i in range(self.k+1, self.n):
+    for i in range(0, self.n):
       bi_ = self.Ht[[i], self.k+1 :]
 
       self.Ht[[i], self.k+1 :] = bi_ - 2 * np.dot(bi_, wk_) / np.dot(wk_.T, wk_) * wk_.T
 
     if self.print_steps:
-      print(f'Ht H_w{self.k+1}:\n{self.Ht}')
+      print(f'Ht H_w{self.k+1}:\n{self.Ht}\n')
 
     self.k += 1
+
+  def iterate(self):
+    for m in range(self.n-2):
+      self._iterate_once()
+
+    T = self._get_alfa_beta()
+
+    return T, self.Ht
+
 
 
 if __name__ == '__main__':
@@ -63,6 +86,10 @@ if __name__ == '__main__':
                 [1, 4, 2, -1],
                 [3, 2, -1, 1]], dtype=float)
 
-  hh = Householder(A, print_steps=True)
+  hh = Householder(A, print_steps=False)
 
-  hh._iterate_once()
+  # hh._iterate_once()
+  result = hh.iterate()
+
+  print(result[0])
+  print(result[1])
