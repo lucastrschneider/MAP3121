@@ -21,11 +21,12 @@ class QRMethod:
     actual_beta (numpy.ndarray): Guarda o valor atual da subdiagonal de A.
     eigen_vec (numpy.ndarray): Matriz 'n x n' que guarda os autovetores do sistema.
   """
-  def __init__(self, a_alfa, a_beta, Ht, spectral=True, print_steps=False):
+  def __init__(self, a_alfa, a_beta, Ht, spectral=True, print_steps=False, print_final=True):
     self.n = a_alfa.shape[0]
     self.spectral = spectral
     self.k = 0
     self.print_steps = print_steps
+    self.print_final = print_final
 
     assert a_alfa.shape[0] == self.n
     assert a_beta.shape[0] == self.n-1
@@ -191,10 +192,11 @@ class QRMethod:
         self._iterate_once()
       self.n -= 1
 
-    print(f'\nResultados finais:')
-    print(f'Numero de iteracoes: {self.k}')
-    print(f'Auto valores:\n{self.actual_alfa}')
-    print(f'Auto vetores:\n{self.eigen_vec}')
+    if self.print_final:
+      print(f'\nResultados finais:')
+      print(f'Numero de iteracoes: {self.k}')
+      print(f'Auto valores:\n{self.actual_alfa}')
+      print(f'Auto vetores:\n{self.eigen_vec}')
 
     return self.actual_alfa, self.eigen_vec
 
