@@ -66,16 +66,24 @@ def run():
 
   eigen_values, eigen_vectors = method_qr.iterate(EPSILON)
 
-  # Checagem dos resultados
+  # Checagem de cada autovalor com seu respectivo autovetor
+  eigen_errors = np.ndarray(eigen_values.shape, dtype=float)
+
   for i in range(eigen_values.shape[0]):
     vi = eigen_vectors[:,[i]]
     Av = np.matmul(A, vi)
     lambdav = eigen_values[i] * vi
 
-    error = np.linalg.norm(Av - lambdav, ord=np.inf)
-    print(error)
+    eigen_errors[i]  = np.linalg.norm(Av - lambdav, ord=np.inf)
+  
+  print(f'\nMaximo de ||A.v - lambda.v|| = {np.max(eigen_errors)}')
 
   # Checar se a matriz de autovetores e ortogonal
+  identity_matrix = np.matmul(eigen_vectors.T,eigen_vectors)
+  
+  ortho_error  = np.linalg.norm(np.identity(eigen_vectors.shape[0]) - identity_matrix, ord=np.inf)
+  
+  print(f'\n||I - V_T.V|| = {ortho_error}')
 
 if __name__ == '__main__':
   run()
