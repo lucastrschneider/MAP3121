@@ -193,14 +193,12 @@ class QRMethod:
       self.n -= 1
 
     if self.print_final:
-      print(f'\nResultados finais:')
-      print(f'Numero de iteracoes: {self.k}')
-      print(f'Auto valores:\n{self.actual_alfa}')
-      print(f'Auto vetores:\n{self.eigen_vec}')
+      print(f'\nMetodo QR concluido')
+      print(f'\tNumero de iteracoes: {self.k}')
 
     return self.actual_alfa, self.eigen_vec
 
 
 if __name__ == '__main__':
   print('Esse arquivo contem apenas o algoritmo QR, mas não os testes.')
-  print('Para rodar os testes corretamente, por favor consulte o README.txt')
+  print('Para rodar os testes corretamente, por favor consulte o LEIAME.txt')

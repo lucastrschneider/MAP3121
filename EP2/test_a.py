@@ -3,6 +3,7 @@ import os
 import numpy as np
 from qr_method import QRMethod
 from householder import Householder
+import utils
 
 EPSILON = 1e-6
 
@@ -15,7 +16,7 @@ def fill_matrix(file_name):
 
   #Matriz
   A = np.ndarray((n, n), dtype=float)
-  
+
   for i in range(n):
       line = f.readline().split()
       for j in range(n):
@@ -34,7 +35,7 @@ def run():
     try:
       mode = input('Digite o nome do arquivo para o teste: ')
 
-      FILE = 'inputs/'+mode
+      FILE = 'inputs/' + mode
 
       script_dir = os.path.dirname(__file__) # caminho absoluto do script
       A = fill_matrix(os.path.join(script_dir, FILE))
@@ -54,7 +55,10 @@ def run():
 
   eigen_values, eigen_vectors = method_qr.iterate(EPSILON)
 
-  # # Checagem de cada autovalor com seu respectivo autovetor
+  print()
+  utils.print_eigen_values_vectors(eigen_values, eigen_vectors)
+
+  # Checagem de cada autovalor com seu respectivo autovetor
   eigen_errors = np.ndarray(eigen_values.shape, dtype=float)
 
   for i in range(eigen_values.shape[0]):
@@ -66,12 +70,12 @@ def run():
   
   print(f'\nMaximo de ||A.v - lambda.v|| = {np.max(eigen_errors)}')
 
-  # # Checar se a matriz de autovetores e ortogonal
+  # Checar se a matriz de autovetores e ortogonal
   identity_matrix = np.matmul(eigen_vectors.T,eigen_vectors)
   
   ortho_error  = np.linalg.norm(np.identity(eigen_vectors.shape[0]) - identity_matrix, ord=np.inf)
   
-  print(f'\n||I - V_T.V|| = {ortho_error}')
+  print(f'\n||I - V_T.V|| = {ortho_error}\n')
 
 if __name__ == '__main__':
   run()
