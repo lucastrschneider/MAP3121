@@ -34,7 +34,7 @@ class Householder:
     Retorna a diagonal pricipal e subdiagonal da matriz tridiagonalizada pelo algoritmo.
 
     Returns:
-        [dict]: Dicionário com dois elementos, um numpy.ndarray representando a diagonal principal
+        dict: Dicionário com dois elementos, um numpy.ndarray representando a diagonal principal
                 cuja chave é "alfa", e um representando as subdiagonais, com chave "beta".
     """
     alfa = np.ndarray(self.n, dtype=float)
@@ -105,7 +105,7 @@ class Householder:
     Método que executa as transformações de Householder para a matriz fornecida no construtor.
 
     Returns:
-        [dict]: Dicionário contendo a matriz tridiagonal e a matriz tranposta de H, para serem
+        dict: Dicionário contendo a matriz tridiagonal e a matriz tranposta de H, para serem
                 utilizados pelo método QR.
     """
     for m in range(self.n-2):

@@ -10,6 +10,23 @@ FILE = 'inputs/input-c'
 EPSILON = 1e-6
 
 class Trelica:
+  """
+  Classe que representa uma treliça bidimensional
+
+  Args:
+      file_name (string): Nome do arquivo de onde os dados da treliça devem ser lidos
+
+  Attributes:
+    total_nodes (int): Número de nós da treliça
+    lose_nodes (int): Número de nós não engastados da treliça.
+    beams_amount (int): Número de barras da treliça.
+    rho (float): Densidade das barras da treliça em kg/m³.
+    A (float): Área da seção transversal das barras da treliça em m².
+    E (float): Módulo de elasticidade das barras da treliça GPa.
+    beams (list[dict]): Lista em que cada item é um dicionário que representa uma barra da treliça.
+    K (numpy.ndarray): Matriz de rigidez do sistema.
+    m (numpy.ndarray): Array que representa a diagonal principal da matriz de massas do sistema.
+  """
   def __init__(self, file_name):
     f = open(file_name, 'r')
 
@@ -42,7 +59,13 @@ class Trelica:
 
 
   def _fill_beam(self, beam):
-    
+    """
+    Método que recebe uma barra e adiciona a sua contribuição para a matriz de
+    rigidez e para a matriz de massas do sistema
+
+    Args:
+        beam (dict): [description]
+    """
     # Contribuicao para matriz de rigidez
     Kij_ = np.ndarray((2,2), dtype=float)
     C = np.cos(np.radians(beam['angle']))
@@ -62,7 +85,7 @@ class Trelica:
     if i <= self.lose_nodes and j <= self.lose_nodes:
       self.K[2*j - 2 : 2*j, 2*i - 2 : 2*i] -= Kij_
       self.K[2*i - 2 : 2*i, 2*j - 2 : 2*j] -= Kij_
-    
+
     if j <= self.lose_nodes:
       self.K[2*j - 2 : 2*j, 2*j - 2 : 2*j] += Kij_
 
@@ -77,8 +100,14 @@ class Trelica:
       self.m[2*j-2] += beam_mass / 2
       self.m[2*j-1] += beam_mass / 2
 
-    
+
   def get_Ktil(self):
+    """
+    Gera a matriz K_til a partir da matriz K do sistema
+
+    Returns:
+        numpy.ndarray: Matriz K multiplicada a direita e a esquerda por M^(-1/2)
+    """
     Ktil = self.K.copy()
     for i in range(Ktil.shape[0]):
       for j in range(Ktil.shape[1]):
@@ -105,7 +134,7 @@ def run():
 
   # Imprimindo 5 menores frequencias e seus modos de vibracao
   print('\nMenores frequencias de vibracao da trelica:')
-  for i in range(5):   
+  for i in range(5):
     print(f'\tFrequencia[{i}] = {np.sqrt(eigen_values)[i]} rad/s')
 
   print('\nModos de vibracao correspondentes:')
