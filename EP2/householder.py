@@ -88,16 +88,5 @@ class Householder:
 
 
 if __name__ == '__main__':
-  A = np.array([[2, -1, 1, 3],
-                [-1, 1, 4, 2],
-                [1, 4, 2, -1],
-                [3, 2, -1, 1]], dtype=float)
-
-  hh = Householder(A, print_steps=False)
-
-  # hh._iterate_once()
-  result = hh.iterate()
-
-  print(result['T']['alfa'])
-  print(result['T']['beta'])
-  print(result['Ht'])
+  print('Esse arquivo contem apenas o algoritmo Householder, mas não os testes.')
+  print('Para rodar os testes corretamente, por favor consulte o LEIAME.txt')
