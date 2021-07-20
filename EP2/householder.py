@@ -70,9 +70,7 @@ class Householder:
       print(f'w{self.k+1}_:\n{wk_}')
 
     # Multiplica a matriz H_wk a esquerda de A
-    self.A[self.k+1:, [self.k]] = ak_ - wk_
-
-    for i in range(self.k+1, self.n):
+    for i in range(self.k, self.n):
       ai_ = self.A[self.k+1 :, [i]]
 
       self.A[self.k+1 :, [i]] = ai_ - 2 * np.dot(ai_.T, wk_) / np.dot(wk_.T, wk_) * wk_
