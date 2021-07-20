@@ -3,6 +3,7 @@ import os
 import numpy as np
 from qr_method import QRMethod
 from householder import Householder
+import utils
 
 FILE = 'inputs/input-c'
 
@@ -97,11 +98,22 @@ def run():
   method_h = Householder(trelica.get_Ktil(), print_steps=False)
   result_h = method_h.iterate()
 
-  method_qr = QRMethod(result_h['T']['alfa'], result_h['T']['beta'], result_h['Ht'], spectral=True, print_final=False)
+  method_qr = QRMethod(result_h['T']['alfa'], result_h['T']['beta'], result_h['Ht'], spectral=True)
   eigen_values, eigen_vectors = method_qr.iterate(EPSILON)
 
-  print(eigen_values)
-  
-  
+  eigen_values, eigen_vectors = utils.sort_eigen_values_vectors(eigen_values, eigen_vectors)
+
+  # Imprimindo 5 menores frequencias e seus modos de vibracao
+  print('\nMenores frequencias de vibracao da trelica:')
+  for i in range(5):   
+    print(f'\tFrequencia[{i}] = {np.sqrt(eigen_values)[i]} rad/s')
+
+  print('\nModos de vibracao correspondentes:')
+  vibration_modes = np.multiply(np.power(trelica.m, -1/2).reshape(trelica.m.shape[0], 1), eigen_vectors[:, 0:5])
+  for i in range(5):
+    print(f'\tModo[{i}] = {vibration_modes[:,i].T}')
+  print()
+
+
 if __name__ == '__main__':
   run()
