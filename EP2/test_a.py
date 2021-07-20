@@ -42,7 +42,7 @@ def run():
       break
 
     except:
-      print('\nNão existe este arquivo! Tente novamente...\n')
+      print('\nNão existe este arquivo!\nExemplo de arquivo existente: input-a\n')
 
   print(f'A =\n{A}')
 
