@@ -1,0 +1,29 @@
+#############################################
+Aplicação do Algoritmo QR e de Transformações
+de Householder - MAP3121
+
+Jean Carlos Mello Xavier Faria - 11259628
+Lucas Tonini Rosenberg Schneider - 11260850
+#############################################
+
+############### DEPENDÊNCIAS ################
+O exercício programa foi desenvolvido em Python e, para executá-lo, é necessário apenas ter uma versão do interpretador instalada. Recomenda-se Python3.7 ou superior.
+
+Em relação às dependências, é necessário ter numpy e matplotlib instalados também.
+
+################# EXECUÇÃO ##################
+O projeto possui um script principal main.py, de onde os testes podem ser selecionados e configurados. Para isso, execute o comando abaixo de dentro da pasta do projeto.
+
+$ python3 main.py
+
+O terminal irá mostrar as instruções de como escolher os testes e configurar os parâmetros dos mesmos.
+
+
+############ ARQUIVO DE ENTRADA #############
+Todos os arquivos de input com dados para os testes devem ficar dentro da pasta inputs/, caso contrário, eles não serão identificados pelos scripts.
+
+O teste A espera um arquivo com a primeira linha contendo a dimensão da matriz, e as seguintes contendo a matriz em si. Como exemplo, veja os arquivos "input-a" e "input-b".
+
+Como só foi fornecido um arquivo de entrada para o teste B, ele sempre irá utilizar o "input-c", dessa forma, não é necessário passar parâmetros adicionais para esse executável.
+
+Mais informações podem ser encontradas na seção 3 do relatório.
