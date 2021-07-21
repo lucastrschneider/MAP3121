@@ -10,8 +10,8 @@ from test_b import Trelica
 from householder import Householder
 from qr_method import QRMethod
 
-TOTAL_TIME_S = 1
-FPS = 200
+TOTAL_TIME_S = 5
+FPS = 120
 
 FILE = 'inputs/input-c'
 EPSILON = 1e-6
@@ -75,7 +75,7 @@ class TrelicaAnimada(Trelica):
     self.vibration_modes = np.multiply(np.power(self.m, -1/2).reshape(self.m.shape[0], 1), eigen_vectors[:, :self.modes_amount])
 
     self.anim = animation.FuncAnimation(self.fig, self._update, frames=np.linspace(0, TOTAL_TIME_S, TOTAL_TIME_S * FPS),
-                                        interval=TOTAL_TIME_S * 1e3 / FPS)
+                                        interval=(1e3 / FPS))
 
 
   def _update(self, time):
