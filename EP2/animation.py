@@ -10,6 +10,9 @@ from test_b import Trelica
 from householder import Householder
 from qr_method import QRMethod
 
+TOTAL_TIME_S = 1
+FPS = 200
+
 FILE = 'inputs/input-c'
 EPSILON = 1e-6
 SCALE = 1e2
@@ -43,8 +46,6 @@ class TrelicaAnimada(Trelica):
       else:
         continue
 
-      print(node_id+1, other_node_id+1)
-
       self.X_0[2*node_id] = self.X_0[2*other_node_id] + multiplier * beam['length']*np.cos(np.radians(beam['angle']))
       self.X_0[2*node_id+1] = self.X_0[2*other_node_id+1] + multiplier * beam['length']*np.sin(np.radians(beam['angle']))
 
@@ -64,7 +65,7 @@ class TrelicaAnimada(Trelica):
     method_h = Householder(Trelica.get_Ktil(self), print_steps=False)
     result_h = method_h.iterate()
 
-    method_qr = QRMethod(result_h['T']['alfa'], result_h['T']['beta'], result_h['Ht'], spectral=True)
+    method_qr = QRMethod(result_h['T']['alfa'], result_h['T']['beta'], result_h['Ht'], spectral=True, print_final=False)
     eigen_values, eigen_vectors = method_qr.iterate(EPSILON)
 
     eigen_values, eigen_vectors = utils.sort_eigen_values_vectors(eigen_values, eigen_vectors)
@@ -73,11 +74,8 @@ class TrelicaAnimada(Trelica):
     self.vibration_frequencies = np.sqrt(eigen_values[:self.modes_amount])
     self.vibration_modes = np.multiply(np.power(self.m, -1/2).reshape(self.m.shape[0], 1), eigen_vectors[:, :self.modes_amount])
 
-    print(self.vibration_frequencies)
-    print(self.vibration_modes)
-
-    self.anim = animation.FuncAnimation(self.fig, self._update, frames=np.linspace(0, 1, 200),
-                                        interval=5)
+    self.anim = animation.FuncAnimation(self.fig, self._update, frames=np.linspace(0, TOTAL_TIME_S, TOTAL_TIME_S * FPS),
+                                        interval=TOTAL_TIME_S * 1e3 / FPS)
 
 
   def _update(self, time):
@@ -105,6 +103,7 @@ class TrelicaAnimada(Trelica):
   
   def save(self, name):
     self.anim.save(name)
+    print('Video exportado com sucesso!')
 
 
 def run():
