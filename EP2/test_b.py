@@ -1,6 +1,8 @@
 import os
 
 import numpy as np
+import matplotlib.pyplot as plt
+
 from qr_method import QRMethod
 from householder import Householder
 import utils
@@ -142,6 +144,17 @@ def run():
   for i in range(5):
     print(f'\tModo[{i}] = {vibration_modes[:,i].T}')
   print()
+
+  # Plotando os modos de vibração para melhor visualização
+  data = {}
+
+  for i in range(5):
+    data[f'Modo {i}'] = vibration_modes[:, i]
+
+  fig, ax = plt.subplots()
+  utils.bar_plot(ax, data, total_width=.5, single_width=1)
+  ax.set(xlabel='Posição correspondente no vetor de deslocamentos', ylabel='Amplitudes dos modos de vibração (m)')
+  plt.show()
 
 
 if __name__ == '__main__':
