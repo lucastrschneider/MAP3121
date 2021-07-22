@@ -59,7 +59,7 @@ class TrelicaAnimada(Trelica):
       point1 = (self.X_0[2*(beam['nodes'][0]-1)], self.X_0[2*(beam['nodes'][0]-1)+1])
       point2 = (self.X_0[2*(beam['nodes'][1]-1)], self.X_0[2*(beam['nodes'][1]-1)+1])
       ln, = self.ax.plot([point1[0], point2[0]], [point1[1], point2[1]], linewidth=2)
-      self.animated_beams.append(ln)      
+      self.animated_beams.append(ln)
 
     # Calcula as frequencias e modos de vibração dos nós que estão soltos
     method_h = Householder(Trelica.get_Ktil(self), print_steps=False)
@@ -69,8 +69,8 @@ class TrelicaAnimada(Trelica):
     eigen_values, eigen_vectors = method_qr.iterate(EPSILON)
 
     eigen_values, eigen_vectors = utils.sort_eigen_values_vectors(eigen_values, eigen_vectors)
-    
-    # Pega as 5 menores frequências e seus respectivos modos de vibração  
+
+    # Pega as 5 menores frequências e seus respectivos modos de vibração
     self.vibration_frequencies = np.sqrt(eigen_values[:self.modes_amount])
     self.vibration_modes = np.multiply(np.power(self.m, -1/2).reshape(self.m.shape[0], 1), eigen_vectors[:, :self.modes_amount])
 
@@ -87,7 +87,7 @@ class TrelicaAnimada(Trelica):
         X_t[2*i] += self.modes_weights[j] * self.vibration_modes[2*i, j] * np.cos(self.vibration_frequencies[j] * time)
         X_t[2*i+1] += self.modes_weights[j] * self.vibration_modes[2*i+1, j] * np.cos(self.vibration_frequencies[j] * time)
 
-    
+
     # Atualiza as barras da treliça
     for i, beam in enumerate(self.beams):
       point1 = (X_t[2*(beam['nodes'][0]-1)], X_t[2*(beam['nodes'][0]-1)+1])
@@ -100,7 +100,7 @@ class TrelicaAnimada(Trelica):
   def show(self):
     plt.show()
 
-  
+
   def save(self, name):
     self.anim.save(name)
     print('Video exportado com sucesso!')
@@ -110,7 +110,8 @@ def run():
   script_dir = os.path.dirname(__file__) # caminho absoluto do script
   trelica = TrelicaAnimada(os.path.join(script_dir, FILE), [SCALE, 0, 0, 0, 0])
   trelica.save('trelica_modo_0.mp4')
-  # trelica.show()
+  trelica.show()
+
 
 if __name__ == '__main__':
   run()
